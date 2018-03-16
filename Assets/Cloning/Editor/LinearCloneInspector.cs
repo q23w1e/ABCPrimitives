@@ -4,22 +4,22 @@ using UnityEditor;
 [CustomEditor(typeof(LinearClone))]
 class LinearCloneInspector: Editor
 {
-    Transform handleTransform;
+    Transform startPositionAsTransform;
     LinearClone cloner;
 
     void OnEnable() 
     {
         cloner = target as LinearClone;
-        handleTransform = cloner.transform;
+        startPositionAsTransform = cloner.transform;
     }
 
     public override void OnInspectorGUI()
     {
         cloner.prefab = EditorGUILayout.ObjectField("Prefab", cloner.prefab, typeof(GameObject), true) as GameObject;
         cloner.Count = EditorGUILayout.IntField("Count", cloner.Count);
-        cloner.Head = EditorGUILayout.Vector3Field("End Point", cloner.Head);
+        cloner.EndPosition = EditorGUILayout.Vector3Field("End Position", cloner.EndPosition);
 
-        if (GUILayout.Button("Clone!"))
+        if (GUILayout.Button("Generate"))
         {
             // I need to find a way to call updateClonesList() automatically inside Count property in order to get rid of this useless button 
             cloner.updateClonesList();
@@ -36,10 +36,10 @@ class LinearCloneInspector: Editor
     {
         cloner = target as LinearClone;
         
-        drawHeadPositionHandle();
+        drawEndPositionHandle();
         drawClonePath();
 
-        if (handleTransform.hasChanged)
+        if (startPositionAsTransform.hasChanged)
         {
             cloner.recalculatePositions();
         }
@@ -48,19 +48,19 @@ class LinearCloneInspector: Editor
     void drawClonePath()
     {
         Handles.color = Color.green;
-        Handles.DrawDottedLine(cloner.Tail, cloner.Head, 0.2f);
+        Handles.DrawDottedLine(cloner.StartPosition, cloner.EndPosition, 0.2f);
     }
 
-    void drawHeadPositionHandle()
+    void drawEndPositionHandle()
     {
-        Vector3 head = cloner.Head;
         EditorGUI.BeginChangeCheck();
-            head = Handles.PositionHandle(head, Quaternion.identity);
+            Vector3 endPosition = Handles.PositionHandle(cloner.EndPosition, Quaternion.identity);
         if (EditorGUI.EndChangeCheck())
         {
-            Undo.RecordObject(cloner, "Move Point");
+            Undo.RecordObject(cloner, "Move End Position");
             EditorUtility.SetDirty(cloner);
-            cloner.Head = head;
+            
+            cloner.EndPosition = endPosition;
             cloner.recalculatePositions();
         }
     }
