@@ -6,15 +6,15 @@ public class LinearClone: MonoBehaviour
 {
     public GameObject prefab;
    
-    int _count = 1;
+    int _count = 4;
     Vector3 _end = 4f * Vector3.right;
     Stack<GameObject> clones = new Stack<GameObject>{};
 
-    public Vector3 Tail
+    public Vector3 StartPosition
     {
         get { return this.transform.position; }
     }
-    public Vector3 Head
+    public Vector3 EndPosition
     {
         get { return this.transform.TransformPoint(_end); }
         set 
@@ -33,7 +33,6 @@ public class LinearClone: MonoBehaviour
         set 
         { 
             if ( _count == value) { return; };
-            
             _count = Mathf.Max(1, value);
         }
     }
@@ -66,7 +65,7 @@ public class LinearClone: MonoBehaviour
     public void recalculatePositions()
     {
         int n = (clones.Count - 1) == 0 ? 1 : (clones.Count - 1);
-        Vector3 d = (Head - Tail) / n;
+        Vector3 d = (EndPosition - StartPosition) / (float)n;
         int i = 0;
         foreach (var clone in clones)
         {
