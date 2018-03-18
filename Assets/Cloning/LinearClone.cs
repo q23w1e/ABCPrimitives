@@ -6,7 +6,7 @@ public class LinearClone: MonoBehaviour
 {
     public GameObject prefab;
    
-    int _count = 4;
+    int _count;
     Vector3 _end = 4f * Vector3.right;
     Stack<GameObject> clones = new Stack<GameObject>{};
 
@@ -37,7 +37,7 @@ public class LinearClone: MonoBehaviour
         }
     }
 
-    public void updateClonesList()
+    public void updateClonesStack()
     {
         if (!prefab) 
         {

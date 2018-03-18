@@ -22,7 +22,7 @@ class LinearCloneInspector: Editor
         if (GUILayout.Button("Generate"))
         {
             // I need to find a way to call updateClonesList() automatically inside Count property in order to get rid of this useless button 
-            cloner.updateClonesList();
+            cloner.updateClonesStack();
             cloner.recalculatePositions();
         }
         if (GUILayout.Button("Clear Stack"))
