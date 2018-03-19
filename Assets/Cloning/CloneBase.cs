@@ -8,7 +8,7 @@ public abstract class CloneBase : MonoBehaviour
     protected GameObject container;
     protected Stack<GameObject> clones = new Stack<GameObject>{};
     
-    int _count = 4;
+    int _count;
 
 	public int Count
     {

@@ -17,6 +17,7 @@ public class RadialClone : CloneBase
     {
         Init();
 
+        Count = 10;
         Radius = 10f;
     }
 

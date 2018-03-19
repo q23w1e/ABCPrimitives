@@ -50,6 +50,7 @@ public class LinearClone: CloneBase
     {
         Init();
 
+        Count = 4;
         StartPosition = 4 * Vector3.left;
         EndPosition = -4 * Vector3.left;
     }
