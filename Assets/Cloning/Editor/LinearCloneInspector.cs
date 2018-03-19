@@ -11,12 +11,19 @@ class LinearCloneInspector: Editor
     {
         cloner = target as LinearClone;
         startPositionAsTransform = cloner.transform;
+        Tools.hidden = true;
+    }
+
+    void OnDisable() 
+    {
+        Tools.hidden = false;
     }
 
     public override void OnInspectorGUI()
     {
         cloner.prefab = EditorGUILayout.ObjectField("Prefab", cloner.prefab, typeof(GameObject), true) as GameObject;
         cloner.Count = EditorGUILayout.IntField("Count", cloner.Count);
+        cloner.StartPosition = EditorGUILayout.Vector3Field("End Position", cloner.StartPosition);
         cloner.EndPosition = EditorGUILayout.Vector3Field("End Position", cloner.EndPosition);
 
         if (GUILayout.Button("Generate"))
@@ -54,14 +61,15 @@ class LinearCloneInspector: Editor
     void drawEndPositionHandle()
     {
         EditorGUI.BeginChangeCheck();
+            Vector3 startPosition = Handles.PositionHandle(cloner.StartPosition, Quaternion.identity);
             Vector3 endPosition = Handles.PositionHandle(cloner.EndPosition, Quaternion.identity);
         if (EditorGUI.EndChangeCheck())
         {
             Undo.RecordObject(cloner, "Move End Position");
             EditorUtility.SetDirty(cloner);
             
+            cloner.StartPosition = startPosition;
             cloner.EndPosition = endPosition;
-            cloner.recalculatePositions();
         }
     }
 }

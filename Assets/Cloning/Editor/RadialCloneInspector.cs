@@ -23,6 +23,9 @@ class RadialCloneInspector: Editor
             cloner.recalculatePositions();
         }
 
-        if (GUILayout.Button("Clear Stack")) { cloner.Clear(); }
+        if (GUILayout.Button("Clear Stack")) 
+        { 
+            cloner.Clear();
+        }
     }
 }
