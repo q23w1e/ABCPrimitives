@@ -5,17 +5,17 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class LinearClone: CloneBase
 {
-    Vector3 _start;
-    Vector3 _end;
+    public Vector3 start;
+    public Vector3 end;
 
     public Vector3 StartPosition
     {
-        get { return this.transform.TransformPoint(_start); }
+        get { return this.transform.TransformPoint(start); }
         set 
         {
-            if (this.transform.InverseTransformPoint(value) != _start) 
+            if (this.transform.InverseTransformPoint(value) != start) 
             {
-                _start = this.transform.InverseTransformPoint(value);
+                start = this.transform.InverseTransformPoint(value);
                 recalculatePositions(); 
             }
         }
@@ -23,12 +23,12 @@ public class LinearClone: CloneBase
 
     public Vector3 EndPosition
     {
-        get { return this.transform.TransformPoint(_end); }
+        get { return this.transform.TransformPoint(end); }
         set 
         {
-            if (this.transform.InverseTransformPoint(value) != _end) 
+            if (this.transform.InverseTransformPoint(value) != end) 
             {
-                _end = this.transform.InverseTransformPoint(value);
+                end = this.transform.InverseTransformPoint(value);
                 recalculatePositions(); 
             }
         }
@@ -51,7 +51,7 @@ public class LinearClone: CloneBase
         Init();
 
         Count = 4;
-        StartPosition = 4 * Vector3.left;
+        start = 4 * Vector3.left;
         EndPosition = -4 * Vector3.left;
     }
 }

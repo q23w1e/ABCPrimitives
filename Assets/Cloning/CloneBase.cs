@@ -3,9 +3,9 @@ using UnityEngine;
 
 public abstract class CloneBase : MonoBehaviour 
 {
-	public GameObject prefab;
+    public GameObject prefab;
    
-    protected GameObject container;
+    public Transform containerTransform;
     protected Stack<GameObject> clones = new Stack<GameObject>{};
     
     int _count;
@@ -22,14 +22,16 @@ public abstract class CloneBase : MonoBehaviour
 
     protected void Init()
     {
-        if (!container)
+        if (this.transform.parent) 
         {
-            container = new GameObject();  
-            container.transform.position = Vector3.zero;
-            container.name = this.GetType().Name;
-            this.transform.parent = container.transform;
-            this.name = "Tool";
-        } 
+            containerTransform = this.transform.parent;
+            return; 
+        }
+        
+        containerTransform = new GameObject(this.GetType().Name).transform;
+        containerTransform.transform.position = this.transform.position;
+        this.transform.parent = containerTransform.transform;
+        this.name = "Tool";
     }
 
     public void updateClonesStack()
@@ -47,7 +49,7 @@ public abstract class CloneBase : MonoBehaviour
             {
                 --diff;
                 GameObject clone = Instantiate(prefab, Vector3.zero, Quaternion.identity);
-                clone.transform.parent = container.transform;
+                clone.transform.parent = containerTransform;
                 clones.Push(clone);
             }
             else

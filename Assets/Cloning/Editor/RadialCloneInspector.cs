@@ -9,6 +9,12 @@ class RadialCloneInspector: Editor
     void OnEnable() 
     {
         cloner = target as RadialClone;
+        Tools.hidden = true;
+    }
+
+    void OnDisable() 
+    {
+        Tools.hidden = false;
     }
 
     public override void OnInspectorGUI()
@@ -26,6 +32,14 @@ class RadialCloneInspector: Editor
         if (GUILayout.Button("Clear Stack")) 
         { 
             cloner.Clear();
+        }
+    }
+
+    void OnSceneGUI()
+    {
+        if (cloner.containerTransform.hasChanged)
+        {
+            cloner.recalculatePositions();
         }
     }
 }
