@@ -4,18 +4,13 @@ using UnityEditor;
 [CustomPropertyDrawer(typeof(CustomGradient))]
 public class GradientDrawer: PropertyDrawer 
 {
-    int _textureWidth = 128;
-
-    // public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-    // {
-    //     return _propertyHeight;
-    // }
+    static int _textureWidth = 32;
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) 
     {
         Event guiEvent = Event.current;
         CustomGradient gradient = fieldInfo.GetValue(property.serializedObject.targetObject) as CustomGradient;
-        float labelWidth = GUI.skin.label.CalcSize(label).x + 5;
+        float labelWidth = GUI.skin.label.CalcSize(label).x + 5f;
         Rect textureRect = new Rect(position.x + labelWidth, position.y, position.width - labelWidth, position.height);
 
         if (guiEvent.type == EventType.Repaint)
@@ -32,7 +27,8 @@ public class GradientDrawer: PropertyDrawer
             {
                 if (textureRect.Contains(guiEvent.mousePosition))
                 {
-                    EditorWindow.GetWindow<GradientEditor>();
+                    GradientEditor window = EditorWindow.GetWindow<GradientEditor>();
+                    window.Gradient = gradient;
                 }
             }
         }

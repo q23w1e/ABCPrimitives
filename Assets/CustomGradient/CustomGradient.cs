@@ -1,11 +1,32 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
 public class CustomGradient
 {
-    public Color Evaluate(float t)
+    public ColorKeys ColorKeys = new ColorKeys();
+
+    public CustomGradient()
     {
-        return Color.Lerp(Color.black, Color.white, t);
+        ColorKeys.Add(Color.black, 0f);
+        ColorKeys.Add(Color.white, 1f);
+    }
+
+    public Color Evaluate(float time)
+    {
+        int ti = 0;
+        for (int i = 0; i < ColorKeys.Count - 1; i++)
+        {
+            if ((time >= ColorKeys[i].Time) && (time <= ColorKeys[i + 1].Time))  
+            {
+                ti = i;
+                break;
+            }
+        }
+        // InverseLerp: (t - ti) / (tii - ti)
+        float localTime = Mathf.InverseLerp(ColorKeys[ti].Time, ColorKeys[ti + 1].Time, time);
+        
+        return Color.Lerp(ColorKeys[ti].Color, ColorKeys[ti + 1].Color, localTime);
     }
 
     public Texture2D GetTexture(int width)
@@ -15,7 +36,8 @@ public class CustomGradient
         
         for (int i = 0; i < pixelColors.Length; i++)
         {
-            pixelColors[i] = Evaluate((float)i / (width - 1));
+            float t = (float)i / (width - 1);
+            pixelColors[i] = Evaluate(t);
         }
         
         texture.SetPixels(pixelColors);
