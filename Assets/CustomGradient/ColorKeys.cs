@@ -22,7 +22,7 @@ public class ColorKeys: IEnumerable
         return _colorKeys[index];
     }
 
-    public void Add(Color color, float time)
+    public ColorKey Add(Color color, float time)
     {
         ColorKey newKey = new ColorKey(color, time);
 
@@ -31,15 +31,34 @@ public class ColorKeys: IEnumerable
             if (time < _colorKeys[i].Time)
             {
                 _colorKeys.Insert(i, newKey);
-                return;
-            }
+                newKey.Index = i;
+                return newKey;
+            }   
         }
         _colorKeys.Add(newKey);
+        
+        return newKey;
+    }
+
+    public void Remove(ColorKey key)
+    {
+        _colorKeys.Remove(key);
+    } 
+
+    public int GetKeyIndex(ColorKey key)
+    {
+        return _colorKeys.IndexOf(key);
+    }
+
+    public void SwapKeys(int indexOfA, int indexOfB)
+    {
+        ColorKey temp = _colorKeys[indexOfA];
+        _colorKeys[indexOfA] = _colorKeys[indexOfB];
+        _colorKeys[indexOfB] = temp;
     }
 
     public void SortByTime()
     {
-        Debug.Log("SORTING CALLED!");
         _colorKeys.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
@@ -61,6 +80,8 @@ public class ColorKey
     Color _color;
     [SerializeField]
     float _time;
+    
+    public int Index;
 
     public ColorKey(Color color, float time)
     {

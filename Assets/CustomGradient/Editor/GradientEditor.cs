@@ -7,12 +7,12 @@ public class GradientEditor : EditorWindow
 {
     static int borderSize = 10;
     static int gradientTexHeight = 40;
-    static float keyControlSize = 10f;
+    // static float keyControlSize = 10f;
 
     CustomGradient _gradient;
-    ColorKeys _colorKeys;
     Rect _gradientPreviewTexRect;
     List<ColorKeyControl> _keyControls = new List<ColorKeyControl>() {};
+    ColorKeyControl _currentlySelected;
 
     public CustomGradient Gradient
     {
@@ -24,6 +24,7 @@ public class GradientEditor : EditorWindow
             {
                 AddColorKeyControl(key);
             }
+            Debug.Log(_gradient.ColorKeys.Count);
             _keyControls[0].IsMovable = false;
             _keyControls[_keyControls.Count - 1].IsMovable = false;
         }
@@ -32,6 +33,11 @@ public class GradientEditor : EditorWindow
     void OnEnable() 
     {
         titleContent.text = "Gradient Editor";
+    }
+
+    void OnDisable() 
+    {
+        _keyControls.Clear();
     }
 
     void OnGUI()
@@ -43,6 +49,7 @@ public class GradientEditor : EditorWindow
 
         ProcessGradientTexturePreviewEvents(guiEvent);
         ProcessKeyControlsEvents(guiEvent);
+        ProcessKeybardEvents(guiEvent);
 
         if (GUI.changed) { Repaint(); }
     }
@@ -51,18 +58,20 @@ public class GradientEditor : EditorWindow
     {
         float time = Mathf.InverseLerp(_gradientPreviewTexRect.xMin, _gradientPreviewTexRect.xMax, mousePosition.x);
         Color color = Random.ColorHSV();
-        ColorKey key = new ColorKey(color, time);
-        _gradient.ColorKeys.Add(color, time);
-        AddColorKeyControl(key);
+        
+        ColorKey newKey = _gradient.ColorKeys.Add(color, time);
+        AddColorKeyControl(newKey);
     }
 
     void AddColorKeyControl(ColorKey key)
     {
         float xMin = _gradientPreviewTexRect.xMin;
-        float xMax = _gradientPreviewTexRect.xMax - borderSize;
+        float xMax = _gradientPreviewTexRect.xMax;
         float y = _gradientPreviewTexRect.yMax;
         ColorKeyControl keyControl = new ColorKeyControl(xMin, xMax, y, key);
+        
         _keyControls.Add(keyControl);
+        MarkAsCurrentlySelected(keyControl);
     }
 
     void DrawGradientTexturePreview()
@@ -73,10 +82,13 @@ public class GradientEditor : EditorWindow
 
     void DrawColorKeyControls()
     {
-        Debug.Log(_keyControls.Count);
         foreach (ColorKeyControl keyControl in _keyControls)
         {
             keyControl.Draw();
+        }
+        if (_currentlySelected != null)
+        {
+            _currentlySelected.DrawSelected();
         }
     }
 
@@ -84,13 +96,20 @@ public class GradientEditor : EditorWindow
     {
         if (_keyControls != null)
         {
-            foreach (var key in _keyControls)
+            foreach (var keyControl in _keyControls)
             {
-                bool guiChanged = key.processEvents(guiEvent);
+                bool guiChanged = keyControl.ProcessEvents(guiEvent);
 
                 if (guiChanged) 
                 { 
-                    _gradient.ColorKeys.SortByTime();
+                    if (keyControl.IsSelected)
+                    {
+                        MarkAsCurrentlySelected(keyControl);
+                    }
+                    int i = _gradient.ColorKeys.GetKeyIndex(keyControl.BoundKey);
+                    
+                    if (i > 0 && keyControl.IsMovable) { SwapIfNeeded(i); }
+
                     GUI.changed = true;
                 }
             }
@@ -99,84 +118,55 @@ public class GradientEditor : EditorWindow
 
     void ProcessGradientTexturePreviewEvents(Event guiEvent)
     {
-        if (_gradientPreviewTexRect != null)
+        if (guiEvent.type == EventType.mouseDown && guiEvent.button == 0)
         {
-            if (guiEvent.type == EventType.mouseDown && guiEvent.button == 0)
+            if (_gradientPreviewTexRect.Contains(guiEvent.mousePosition))
             {
-                if (_gradientPreviewTexRect.Contains(guiEvent.mousePosition))
-                {
-                    AddColorKey(guiEvent.mousePosition);
-                    GUI.changed = true;
-                }
+                AddColorKey(guiEvent.mousePosition);
+                GUI.changed = true;
             }
         }
     }
-}
 
-public class ColorKeyControl
-{
-    static int size = 10;
-    
-    float _xMin;
-    float _xMax;
-    Rect _rect;
-    ColorKey _boundKey;
-    bool _isDragged = false;
-    
-    public bool IsSelected = false;
-    public bool IsMovable = true;
-
-    public ColorKeyControl(float xMin, float xMax, float y, ColorKey key)
+    void ProcessKeybardEvents(Event guiEvent)
     {
-        _xMin = xMin;
-        _xMax = xMax;
-        _boundKey = key;
-        float positionX = Mathf.Lerp(xMin, xMax, key.Time);
-        float offset = size * 0.5f;
-        _rect = new Rect(positionX - offset, y + offset, size, size * 2f);
-    }
-
-    void DragAlongX(float deltaX)
-    {
-        _rect.x += deltaX;
-        _rect.x = Mathf.Clamp(_rect.x, _xMin, _xMax);
-        _boundKey.Time = Mathf.InverseLerp(_xMin, _xMax, _rect.x);
-    }
-
-    public void Draw()
-    {
-        EditorGUI.DrawRect(_rect, _boundKey.Color);
-    }
-
-    public bool processEvents(Event guiEvent)
-    {
-        switch (guiEvent.type)
+        if (guiEvent.type == EventType.keyDown && guiEvent.keyCode == KeyCode.Backspace)
         {
-            case EventType.MouseDown:
-                if (guiEvent.button == 0)
-                {
-                    if (_rect.Contains(guiEvent.mousePosition))
-                    {
-                        _isDragged = true;
-                        GUI.changed = true;
-                    }
-                }
-                break;
-            case EventType.mouseDrag:
-                if (guiEvent.button == 0 && _isDragged && IsMovable)
-                {
-                    DragAlongX(guiEvent.delta.x);
-                    guiEvent.Use();
-                 
-                    return true;
-                }
-                break;
-            case EventType.mouseUp:
-                _isDragged = false;
-                break;
+            if (_currentlySelected.IsMovable)
+            {
+            _gradient.ColorKeys.Remove(_currentlySelected.BoundKey);
+            _keyControls.Remove(_currentlySelected);
+            _currentlySelected = null;
+            GUI.changed = true;
+            }
         }
-
-        return false;
     }
 
+    void SwapIfNeeded(int i)
+    {
+        if (_gradient.ColorKeys[i].Time < _gradient.ColorKeys[i - 1].Time)
+        {
+            _gradient.ColorKeys.SwapKeys(i - 1, i);
+        }
+        if (_gradient.ColorKeys[i].Time > _gradient.ColorKeys[i + 1].Time)
+        {
+            _gradient.ColorKeys.SwapKeys(i + 1, i);
+        }
+    }
+
+    void MarkAsCurrentlySelected(ColorKeyControl keyControl)
+    {
+        if (_currentlySelected == null)
+        {
+            _currentlySelected = keyControl;
+        }
+        else 
+        {
+            if (_currentlySelected != keyControl)
+            {
+                _currentlySelected.IsSelected = false;
+                _currentlySelected = keyControl;
+            }
+        }
+    }
 }
