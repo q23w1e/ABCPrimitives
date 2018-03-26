@@ -25,17 +25,18 @@ public class ColorKeys: IEnumerable
     public ColorKey Add(Color color, float time)
     {
         ColorKey newKey = new ColorKey(color, time);
+        bool isBoundary = true;
 
         for (int i = 0; i < _colorKeys.Count; i++)
         {
             if (time < _colorKeys[i].Time)
             {
                 _colorKeys.Insert(i, newKey);
-                newKey.Index = i;
-                return newKey;
+                isBoundary = false;
+                break;
             }   
         }
-        _colorKeys.Add(newKey);
+        if (isBoundary) { _colorKeys.Add(newKey); }
         
         return newKey;
     }

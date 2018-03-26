@@ -7,7 +7,6 @@ public class GradientEditor : EditorWindow
 {
     static int borderSize = 10;
     static int gradientTexHeight = 40;
-    // static float keyControlSize = 10f;
 
     CustomGradient _gradient;
     Rect _gradientPreviewTexRect;
@@ -46,6 +45,7 @@ public class GradientEditor : EditorWindow
  
         DrawColorKeyControls();
         DrawGradientTexturePreview();
+        DrawSettingsBlock();
 
         ProcessGradientTexturePreviewEvents(guiEvent);
         ProcessKeyControlsEvents(guiEvent);
@@ -92,6 +92,22 @@ public class GradientEditor : EditorWindow
         }
     }
 
+    void DrawSettingsBlock()
+    {
+        Rect rect = new Rect(borderSize, gradientTexHeight * 2 + borderSize, _gradientPreviewTexRect.width, _gradientPreviewTexRect.height);
+        
+        GUILayout.BeginArea(rect);
+        EditorGUI.BeginChangeCheck();
+        Color selectedKeyColor = (_currentlySelected == null) ? Color.white : _currentlySelected.BoundKey.Color;
+        Color color = EditorGUILayout.ColorField(selectedKeyColor);
+        if (EditorGUI.EndChangeCheck())
+        {
+            _currentlySelected.BoundKey.Color = color;
+            GUI.changed = true;
+        }
+        GUILayout.EndArea();
+    }
+
     void ProcessKeyControlsEvents(Event guiEvent)
     {
         if (_keyControls != null)
@@ -134,10 +150,10 @@ public class GradientEditor : EditorWindow
         {
             if (_currentlySelected.IsMovable)
             {
-            _gradient.ColorKeys.Remove(_currentlySelected.BoundKey);
-            _keyControls.Remove(_currentlySelected);
-            _currentlySelected = null;
-            GUI.changed = true;
+                _gradient.ColorKeys.Remove(_currentlySelected.BoundKey);
+                _keyControls.Remove(_currentlySelected);
+                _currentlySelected = null;
+                GUI.changed = true;
             }
         }
     }
