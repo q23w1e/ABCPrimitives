@@ -19,11 +19,12 @@ public class GradientEditor : EditorWindow
         { 
             _gradient = value;
             _gradientPreviewTexRect = new Rect(borderSize, borderSize, position.width - 2 * borderSize, gradientTexHeight);
-            foreach (ColorKey key in _gradient.ColorKeys)
-            {
-                AddColorKeyControl(key);
+
+            foreach (ColorKey key in _gradient.ColorKeys) 
+            { 
+                AddColorKeyControl(key); 
             }
-            Debug.Log(_gradient.ColorKeys.Count);
+           
             _keyControls[0].IsMovable = false;
             _keyControls[_keyControls.Count - 1].IsMovable = false;
         }
