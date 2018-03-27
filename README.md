@@ -1,8 +1,9 @@
 # ABCPrimitives
 Set of simple tools that makes my life (maybe) in Unity easier 
 
-#### Linear Clone
-Clone object N times between two points
-#### Radial Clone
-Clone object N times on XZ circle
-#### Custom Gradient
+#### Cloning 
+- Linear Clone (clone object N times between two points)
+- Radial Clone (clone object N times on XZ circle)
+
+#### Other
+- Custom Gradient
