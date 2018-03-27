@@ -10,19 +10,24 @@ class LinearCloneInspector: Editor
     void OnEnable() 
     {
         cloner = target as LinearClone;
-        startPositionAsTransform = cloner.transform;
+        Tools.hidden = true;
+    }
+
+    void OnDisable() 
+    {
+        Tools.hidden = false;
     }
 
     public override void OnInspectorGUI()
     {
         cloner.prefab = EditorGUILayout.ObjectField("Prefab", cloner.prefab, typeof(GameObject), true) as GameObject;
         cloner.Count = EditorGUILayout.IntField("Count", cloner.Count);
+        cloner.StartPosition = EditorGUILayout.Vector3Field("End Position", cloner.StartPosition);
         cloner.EndPosition = EditorGUILayout.Vector3Field("End Position", cloner.EndPosition);
 
         if (GUILayout.Button("Generate"))
         {
-            // I need to find a way to call updateClonesList() automatically inside Count property in order to get rid of this useless button 
-            cloner.updateClonesList();
+            cloner.updateClonesStack();
             cloner.recalculatePositions();
         }
         if (GUILayout.Button("Clear Stack"))
@@ -36,13 +41,24 @@ class LinearCloneInspector: Editor
     {
         cloner = target as LinearClone;
         
-        drawEndPositionHandle();
+        cloner.start = showPositionHPoint(cloner.start);
+        cloner.end = showPositionHPoint(cloner.end);
+        cloner.recalculatePositions();
         drawClonePath();
 
-        if (startPositionAsTransform.hasChanged)
+        if (cloner.containerTransform.hasChanged)
         {
+            drawClonePath();
             cloner.recalculatePositions();
         }
+    }
+
+    void updateHandles()
+    {
+        cloner.start = showPositionHPoint(cloner.start);
+        cloner.end = showPositionHPoint(cloner.end);
+        drawClonePath();
+        cloner.recalculatePositions();
     }
 
     void drawClonePath()
@@ -51,17 +67,19 @@ class LinearCloneInspector: Editor
         Handles.DrawDottedLine(cloner.StartPosition, cloner.EndPosition, 0.2f);
     }
 
-    void drawEndPositionHandle()
+    Vector3 showPositionHPoint(Vector3 point)
     {
+        Vector3 endPosition = cloner.containerTransform.TransformPoint(point);
         EditorGUI.BeginChangeCheck();
-            Vector3 endPosition = Handles.PositionHandle(cloner.EndPosition, Quaternion.identity);
+            endPosition = Handles.DoPositionHandle(endPosition, Quaternion.identity);
         if (EditorGUI.EndChangeCheck())
         {
-            Undo.RecordObject(cloner, "Move End Position");
+            Undo.RecordObject(cloner, "Move Linear Clone Position");
             EditorUtility.SetDirty(cloner);
             
-            cloner.EndPosition = endPosition;
-            cloner.recalculatePositions();
+            point = cloner.containerTransform.InverseTransformPoint(endPosition);
         }
+
+        return point;
     }
 }
