@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class ColorKeys: IEnumerable
 {
+    [SerializeField]
     List<ColorKey> _colorKeys = new List<ColorKey>() {};
 
     public ColorKey this[int i]

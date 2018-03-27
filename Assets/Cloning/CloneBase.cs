@@ -48,7 +48,7 @@ public abstract class CloneBase : MonoBehaviour
             if (diff > 0)
             {
                 --diff;
-                GameObject clone = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+                GameObject clone = Instantiate(prefab, Vector3.zero, prefab.transform.rotation);
                 clone.transform.parent = containerTransform;
                 clones.Push(clone);
             }
