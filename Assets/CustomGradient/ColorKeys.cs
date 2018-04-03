@@ -43,7 +43,7 @@ public class ColorKeys: IEnumerable
 
     public void Remove(ColorKey key)
     {
-        _colorKeys.Remove(key);
+        _colorKeys.RemoveAt(key.Index);
     } 
 
     public int GetKeyIndex(ColorKey key)

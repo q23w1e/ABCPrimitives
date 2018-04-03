@@ -19,11 +19,12 @@ public class GradientEditor : EditorWindow
         { 
             _gradient = value;
             _gradientPreviewTexRect = new Rect(borderSize, borderSize, position.width - 2 * borderSize, gradientTexHeight);
+            
+            _keyControls.Clear();
             foreach (ColorKey key in _gradient.ColorKeys)
             {
                 AddColorKeyControl(key);
             }
-            Debug.Log(_gradient.ColorKeys.Count);
             _keyControls[0].IsMovable = false;
             _keyControls[_keyControls.Count - 1].IsMovable = false;
         }
@@ -105,6 +106,12 @@ public class GradientEditor : EditorWindow
             _currentlySelected.BoundKey.Color = color;
             GUI.changed = true;
         }
+
+        if (GUILayout.Button("Reset"))
+        {
+            Gradient = new CustomGradient();
+        }
+
         GUILayout.EndArea();
     }
 
@@ -134,7 +141,7 @@ public class GradientEditor : EditorWindow
 
     void ProcessGradientTexturePreviewEvents(Event guiEvent)
     {
-        if (guiEvent.type == EventType.mouseDown && guiEvent.button == 0)
+        if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0)
         {
             if (_gradientPreviewTexRect.Contains(guiEvent.mousePosition))
             {
@@ -146,7 +153,7 @@ public class GradientEditor : EditorWindow
 
     void ProcessKeybardEvents(Event guiEvent)
     {
-        if (guiEvent.type == EventType.keyDown && guiEvent.keyCode == KeyCode.Backspace)
+        if (guiEvent.type == EventType.KeyDown && guiEvent.keyCode == KeyCode.Backspace)
         {
             if (_currentlySelected.IsMovable)
             {
