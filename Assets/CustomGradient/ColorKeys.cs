@@ -63,6 +63,11 @@ public class ColorKeys: IEnumerable
         _colorKeys.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
+    public void Clear()
+    {
+        _colorKeys.Clear();
+    }
+
     IEnumerator IEnumerable.GetEnumerator()
     {
         return this.GetEnumertor();

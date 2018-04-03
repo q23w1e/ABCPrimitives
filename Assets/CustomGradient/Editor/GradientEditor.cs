@@ -12,6 +12,7 @@ public class GradientEditor : EditorWindow
     Rect _gradientPreviewTexRect;
     List<ColorKeyControl> _keyControls = new List<ColorKeyControl>() {};
     ColorKeyControl _currentlySelected;
+    InterpolationTypes types;
 
     public CustomGradient Gradient
     {
@@ -95,7 +96,7 @@ public class GradientEditor : EditorWindow
 
     void DrawSettingsBlock()
     {
-        Rect rect = new Rect(borderSize, gradientTexHeight * 2 + borderSize, _gradientPreviewTexRect.width, _gradientPreviewTexRect.height);
+        Rect rect = new Rect(borderSize, gradientTexHeight * 2 + borderSize, _gradientPreviewTexRect.width, _gradientPreviewTexRect.height * 2);
         
         GUILayout.BeginArea(rect);
         EditorGUI.BeginChangeCheck();
@@ -109,7 +110,7 @@ public class GradientEditor : EditorWindow
 
         if (GUILayout.Button("Reset"))
         {
-            Gradient = new CustomGradient();
+            Reset();
         }
 
         GUILayout.EndArea();
@@ -163,6 +164,14 @@ public class GradientEditor : EditorWindow
                 GUI.changed = true;
             }
         }
+    }
+
+    void Reset()
+    {
+        _gradient.Clear();
+        _keyControls.Clear();
+        _currentlySelected = null;
+        Gradient = _gradient;
     }
 
     void SwapIfNeeded(int i)
