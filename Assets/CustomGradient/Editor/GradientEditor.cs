@@ -12,7 +12,7 @@ public class GradientEditor : EditorWindow
     Rect _gradientPreviewTexRect;
     List<ColorKeyControl> _keyControls = new List<ColorKeyControl>() {};
     ColorKeyControl _currentlySelected;
-    InterpolationTypes types;
+    InterpolationTypes _type;
 
     public CustomGradient Gradient
     {
@@ -79,7 +79,7 @@ public class GradientEditor : EditorWindow
     void DrawGradientTexturePreview()
     {
         _gradientPreviewTexRect = new Rect(borderSize, borderSize, position.width - 2 * borderSize, gradientTexHeight);
-        GUI.DrawTexture(_gradientPreviewTexRect, _gradient.GetTexture((int)_gradientPreviewTexRect.width));
+        GUI.DrawTexture(_gradientPreviewTexRect, _gradient.GetTexture((int)_gradientPreviewTexRect.width, _type));
     }
 
     void DrawColorKeyControls()
@@ -99,6 +99,7 @@ public class GradientEditor : EditorWindow
         Rect rect = new Rect(borderSize, gradientTexHeight * 2 + borderSize, _gradientPreviewTexRect.width, _gradientPreviewTexRect.height * 2);
         
         GUILayout.BeginArea(rect);
+        
         EditorGUI.BeginChangeCheck();
         Color selectedKeyColor = (_currentlySelected == null) ? Color.white : _currentlySelected.BoundKey.Color;
         Color color = EditorGUILayout.ColorField(selectedKeyColor);
@@ -107,6 +108,15 @@ public class GradientEditor : EditorWindow
             _currentlySelected.BoundKey.Color = color;
             GUI.changed = true;
         }
+
+        EditorGUI.BeginChangeCheck();
+        InterpolationTypes selectedType = (InterpolationTypes)EditorGUILayout.EnumPopup(_gradient.interpolationTypes);
+        if (EditorGUI.EndChangeCheck())
+        {
+            _type = selectedType;
+            GUI.changed = true;
+        }
+        
         GUILayout.EndArea();
     }
 

@@ -3,15 +3,16 @@ using UnityEngine;
 
 public enum InterpolationTypes
 {
-    ConstantMin,
     Linear,
-    Hermite
+    ConstantMin,
+    // Hermite
 }
 
 [System.Serializable]
 public class CustomGradient
 {
     public ColorKeys ColorKeys = new ColorKeys();
+    public InterpolationTypes interpolationTypes;
 
     public CustomGradient()
     {
@@ -30,7 +31,7 @@ public class CustomGradient
         Init();
     }
 
-    public Color Evaluate(float time, InterpolationTypes type = InterpolationTypes.Linear)
+    Color Evaluate(float time, InterpolationTypes type)
     {
         int ti = 0;
         for (int i = 0; i < ColorKeys.Count - 1; i++)
@@ -59,16 +60,12 @@ public class CustomGradient
                     
                     break;
                 }
-            case (InterpolationTypes.Hermite):
-                {
-                    break;
-                }
         }
 
         return color;
     }
 
-    public Texture2D GetTexture(int width)
+    public Texture2D GetTexture(int width, InterpolationTypes type = InterpolationTypes.Linear)
     {
         Texture2D texture = new Texture2D(width, 1);
         Color[] pixelColors = new Color[width];
@@ -76,7 +73,7 @@ public class CustomGradient
         for (int i = 0; i < pixelColors.Length; i++)
         {
             float t = (float)i / (width - 1);
-            pixelColors[i] = Evaluate(t);
+            pixelColors[i] = Evaluate(t, type);
         }
         
         texture.SetPixels(pixelColors);
