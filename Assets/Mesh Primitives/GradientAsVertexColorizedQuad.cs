@@ -17,7 +17,6 @@ public class GradientAsVertexColorizedQuad : MonoBehaviour
     {
         _mesh.Clear();
         
-        ProceduralGrid grid = new ProceduralGrid(_mesh, 1, _gradient.ColorKeys.Count - 1);
         int width = _gradient.ColorKeys.Count - 1;
         int height = 1;
 
@@ -33,5 +32,9 @@ public class GradientAsVertexColorizedQuad : MonoBehaviour
             colors[i + (width + 1)] = color;
         }
         _mesh.colors = colors;
+    }
+
+    void Start() {
+        GenerateVertexColorsFromGradient();
     }
 }

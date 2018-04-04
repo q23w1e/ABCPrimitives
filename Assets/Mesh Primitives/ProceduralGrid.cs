@@ -39,14 +39,8 @@ public class ProceduralGrid: MonoBehaviour
 
     void Awake() 
     {
+        //using shared vertex colors is not my case
         _mesh = GetComponent<MeshFilter>().mesh;
-    }
-
-    public ProceduralGrid(Mesh mesh, int height, int width)
-    {
-        Width = width;
-        Height = height;
-        _mesh = mesh;
     }
 
     public void Generate()
