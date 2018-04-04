@@ -12,10 +12,12 @@ namespace MeshConstructor
             float heightScaleFactor = (unitQuad) ? (1f / height) : 1f;
 
             for (int h = 0; h <= height; h++)
+            {
                 for (int w = 0; w <= width; w++)
                 {
                     vertices[h * (width + 1) + w] = new Vector3(w * widthScaleFactor, 0, h * heightScaleFactor);
                 }
+            }
 
             return vertices;
         }

@@ -22,7 +22,7 @@ class LinearCloneInspector: Editor
     {
         cloner.prefab = EditorGUILayout.ObjectField("Prefab", cloner.prefab, typeof(GameObject), true) as GameObject;
         cloner.Count = EditorGUILayout.IntField("Count", cloner.Count);
-        cloner.StartPosition = EditorGUILayout.Vector3Field("End Position", cloner.StartPosition);
+        cloner.StartPosition = EditorGUILayout.Vector3Field("Start Position", cloner.StartPosition);
         cloner.EndPosition = EditorGUILayout.Vector3Field("End Position", cloner.EndPosition);
 
         if (GUILayout.Button("Generate"))
@@ -41,8 +41,8 @@ class LinearCloneInspector: Editor
     {
         cloner = target as LinearClone;
         
-        cloner.start = showPositionHPoint(cloner.start);
-        cloner.end = showPositionHPoint(cloner.end);
+        cloner.start = showPositionPoint(cloner.start);
+        cloner.end = showPositionPoint(cloner.end);
         cloner.recalculatePositions();
         drawClonePath();
 
@@ -55,8 +55,8 @@ class LinearCloneInspector: Editor
 
     void updateHandles()
     {
-        cloner.start = showPositionHPoint(cloner.start);
-        cloner.end = showPositionHPoint(cloner.end);
+        cloner.start = showPositionPoint(cloner.start);
+        cloner.end = showPositionPoint(cloner.end);
         drawClonePath();
         cloner.recalculatePositions();
     }
@@ -67,7 +67,7 @@ class LinearCloneInspector: Editor
         Handles.DrawDottedLine(cloner.StartPosition, cloner.EndPosition, 0.2f);
     }
 
-    Vector3 showPositionHPoint(Vector3 point)
+    Vector3 showPositionPoint(Vector3 point)
     {
         Vector3 endPosition = cloner.containerTransform.TransformPoint(point);
         EditorGUI.BeginChangeCheck();
