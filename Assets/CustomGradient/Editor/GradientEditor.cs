@@ -107,12 +107,6 @@ public class GradientEditor : EditorWindow
             _currentlySelected.BoundKey.Color = color;
             GUI.changed = true;
         }
-
-        if (GUILayout.Button("Reset"))
-        {
-            Reset();
-        }
-
         GUILayout.EndArea();
     }
 
@@ -164,14 +158,6 @@ public class GradientEditor : EditorWindow
                 GUI.changed = true;
             }
         }
-    }
-
-    void Reset()
-    {
-        _gradient.Clear();
-        _keyControls.Clear();
-        _currentlySelected = null;
-        Gradient = _gradient;
     }
 
     void SwapIfNeeded(int i)

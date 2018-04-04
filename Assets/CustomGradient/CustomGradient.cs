@@ -13,7 +13,6 @@ public class CustomGradient
 {
     public ColorKeys ColorKeys = new ColorKeys();
 
-
     public CustomGradient()
     {
         Init();
@@ -25,7 +24,7 @@ public class CustomGradient
         ColorKeys.Add(Color.white, 1f);
     }
 
-    public void Clear()
+    public void Reset()
     {
         ColorKeys.Clear();
         Init();
