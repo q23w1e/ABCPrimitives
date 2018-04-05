@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -79,7 +80,8 @@ public class GradientEditor : EditorWindow
     void DrawGradientTexturePreview()
     {
         _gradientPreviewTexRect = new Rect(borderSize, borderSize, position.width - 2 * borderSize, gradientTexHeight);
-        GUI.DrawTexture(_gradientPreviewTexRect, _gradient.GetTexture((int)_gradientPreviewTexRect.width, _type));
+        Texture2D gradientTexture = _gradient.GetTexture((int)_gradientPreviewTexRect.width, _type);
+        GUI.DrawTexture(_gradientPreviewTexRect, gradientTexture);
     }
 
     void DrawColorKeyControls()
@@ -115,6 +117,17 @@ public class GradientEditor : EditorWindow
         {
             _type = selectedType;
             GUI.changed = true;
+        }
+
+        if (GUILayout.Button("Save as PNG"))
+        {
+            Texture2D texture = _gradient.GetTexture(64, _type);
+            byte[] bytes = texture.EncodeToPNG();
+            string fileName = string.Format("Gradient{0}x{1}.png", texture.width, texture.height);
+            string filePath = string.Format(@"{0}/{1}/", Application.dataPath, "Textures");
+            
+            if (!Directory.Exists(filePath)) { Directory.CreateDirectory(filePath); }
+            File.WriteAllBytes(filePath + fileName, bytes);
         }
         
         GUILayout.EndArea();
