@@ -60,7 +60,7 @@ public class ColorKeyControl
                     }
                 }
                 break;
-            case EventType.mouseDrag:
+            case EventType.MouseDrag:
                 if (guiEvent.button == 0 && _isDragged && IsMovable)
                 {
                     DragAlongX(guiEvent.delta.x);
@@ -69,7 +69,7 @@ public class ColorKeyControl
                     return true;
                 }
                 break;
-            case EventType.mouseUp:
+            case EventType.MouseUp:
                 _isDragged = false;
                 break;
         }

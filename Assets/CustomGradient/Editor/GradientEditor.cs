@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -12,6 +13,7 @@ public class GradientEditor : EditorWindow
     Rect _gradientPreviewTexRect;
     List<ColorKeyControl> _keyControls = new List<ColorKeyControl>() {};
     ColorKeyControl _currentlySelected;
+    InterpolationTypes _type;
 
     public CustomGradient Gradient
     {
@@ -19,12 +21,12 @@ public class GradientEditor : EditorWindow
         { 
             _gradient = value;
             _gradientPreviewTexRect = new Rect(borderSize, borderSize, position.width - 2 * borderSize, gradientTexHeight);
-
-            foreach (ColorKey key in _gradient.ColorKeys) 
-            { 
-                AddColorKeyControl(key); 
+            
+            _keyControls.Clear();
+            foreach (ColorKey key in _gradient.ColorKeys)
+            {
+                AddColorKeyControl(key);
             }
-           
             _keyControls[0].IsMovable = false;
             _keyControls[_keyControls.Count - 1].IsMovable = false;
         }
@@ -78,7 +80,8 @@ public class GradientEditor : EditorWindow
     void DrawGradientTexturePreview()
     {
         _gradientPreviewTexRect = new Rect(borderSize, borderSize, position.width - 2 * borderSize, gradientTexHeight);
-        GUI.DrawTexture(_gradientPreviewTexRect, _gradient.GetTexture((int)_gradientPreviewTexRect.width));
+        Texture2D gradientTexture = _gradient.GetTexture((int)_gradientPreviewTexRect.width, _type);
+        GUI.DrawTexture(_gradientPreviewTexRect, gradientTexture);
     }
 
     void DrawColorKeyControls()
@@ -95,9 +98,10 @@ public class GradientEditor : EditorWindow
 
     void DrawSettingsBlock()
     {
-        Rect rect = new Rect(borderSize, gradientTexHeight * 2 + borderSize, _gradientPreviewTexRect.width, _gradientPreviewTexRect.height);
+        Rect rect = new Rect(borderSize, gradientTexHeight * 2 + borderSize, _gradientPreviewTexRect.width, _gradientPreviewTexRect.height * 2);
         
         GUILayout.BeginArea(rect);
+        
         EditorGUI.BeginChangeCheck();
         Color selectedKeyColor = (_currentlySelected == null) ? Color.white : _currentlySelected.BoundKey.Color;
         Color color = EditorGUILayout.ColorField(selectedKeyColor);
@@ -106,6 +110,26 @@ public class GradientEditor : EditorWindow
             _currentlySelected.BoundKey.Color = color;
             GUI.changed = true;
         }
+
+        EditorGUI.BeginChangeCheck();
+        InterpolationTypes selectedType = (InterpolationTypes)EditorGUILayout.EnumPopup(_gradient.interpolationTypes);
+        if (EditorGUI.EndChangeCheck())
+        {
+            _type = selectedType;
+            GUI.changed = true;
+        }
+
+        if (GUILayout.Button("Save as PNG"))
+        {
+            Texture2D texture = _gradient.GetTexture(64, _type);
+            byte[] bytes = texture.EncodeToPNG();
+            string fileName = string.Format("Gradient{0}x{1}.png", texture.width, texture.height);
+            string filePath = string.Format(@"{0}/{1}/", Application.dataPath, "Textures");
+            
+            if (!Directory.Exists(filePath)) { Directory.CreateDirectory(filePath); }
+            File.WriteAllBytes(filePath + fileName, bytes);
+        }
+        
         GUILayout.EndArea();
     }
 
@@ -135,7 +159,7 @@ public class GradientEditor : EditorWindow
 
     void ProcessGradientTexturePreviewEvents(Event guiEvent)
     {
-        if (guiEvent.type == EventType.mouseDown && guiEvent.button == 0)
+        if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0)
         {
             if (_gradientPreviewTexRect.Contains(guiEvent.mousePosition))
             {
@@ -147,7 +171,7 @@ public class GradientEditor : EditorWindow
 
     void ProcessKeybardEvents(Event guiEvent)
     {
-        if (guiEvent.type == EventType.keyDown && guiEvent.keyCode == KeyCode.Backspace)
+        if (guiEvent.type == EventType.KeyDown && guiEvent.keyCode == KeyCode.Backspace)
         {
             if (_currentlySelected.IsMovable)
             {
