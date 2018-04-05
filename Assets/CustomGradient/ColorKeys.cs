@@ -44,7 +44,7 @@ public class ColorKeys: IEnumerable
 
     public void Remove(ColorKey key)
     {
-        _colorKeys.Remove(key);
+        _colorKeys.RemoveAt(key.Index);
     } 
 
     public int GetKeyIndex(ColorKey key)
@@ -62,6 +62,11 @@ public class ColorKeys: IEnumerable
     public void SortByTime()
     {
         _colorKeys.Sort((a, b) => a.Time.CompareTo(b.Time));
+    }
+
+    public void Clear()
+    {
+        _colorKeys.Clear();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
