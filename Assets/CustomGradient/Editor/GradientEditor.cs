@@ -13,7 +13,6 @@ public class GradientEditor : EditorWindow
     Rect _gradientPreviewTexRect;
     List<ColorKeyControl> _keyControls = new List<ColorKeyControl>() {};
     ColorKeyControl _currentlySelected;
-    InterpolationTypes _type;
 
     public CustomGradient Gradient
     {
@@ -54,7 +53,10 @@ public class GradientEditor : EditorWindow
         ProcessKeyControlsEvents(guiEvent);
         ProcessKeybardEvents(guiEvent);
 
-        if (GUI.changed) { Repaint(); }
+        if (GUI.changed) 
+        {
+            Repaint();
+        }
     }
 
     void AddColorKey(Vector2 mousePosition)
@@ -80,7 +82,7 @@ public class GradientEditor : EditorWindow
     void DrawGradientTexturePreview()
     {
         _gradientPreviewTexRect = new Rect(borderSize, borderSize, position.width - 2 * borderSize, gradientTexHeight);
-        Texture2D gradientTexture = _gradient.GetTexture((int)_gradientPreviewTexRect.width, _type);
+        Texture2D gradientTexture = _gradient.GetTexture();
         GUI.DrawTexture(_gradientPreviewTexRect, gradientTexture);
     }
 
@@ -112,18 +114,18 @@ public class GradientEditor : EditorWindow
         }
 
         EditorGUI.BeginChangeCheck();
-        InterpolationTypes selectedType = (InterpolationTypes)EditorGUILayout.EnumPopup(_gradient.interpolationTypes);
+        InterpolationTypes selectedType = (InterpolationTypes)EditorGUILayout.EnumPopup(_gradient.InterpolationType);
         if (EditorGUI.EndChangeCheck())
         {
-            _type = selectedType;
+            _gradient.InterpolationType = selectedType;
             GUI.changed = true;
         }
 
         if (GUILayout.Button("Save as PNG"))
         {
-            Texture2D texture = _gradient.GetTexture(64, _type);
+            Texture2D texture = _gradient.GetTexture(64);
             byte[] bytes = texture.EncodeToPNG();
-            string fileName = string.Format("Gradient{0}x{1}.png", texture.width, texture.height);
+            string fileName = string.Format("Gradient{0}x{1}_{2}.png", texture.width, texture.height, _gradient.InterpolationType.ToString());
             string filePath = string.Format(@"{0}/{1}/", Application.dataPath, "Textures");
             
             if (!Directory.Exists(filePath)) { Directory.CreateDirectory(filePath); }

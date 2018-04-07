@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: DiffuseRamp
+  m_Name: DiffuseRamp_Linear
   m_Shader: {fileID: 4800000, guid: 21053bf1e5c4b3e4cb747cd4fb86b70d, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -55,7 +55,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _RampTex:
-        m_Texture: {fileID: 2800000, guid: a936b733531b54340a550f74266453ca, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1e80c0523f744dd4ba7d98f37bf3e8fe, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:

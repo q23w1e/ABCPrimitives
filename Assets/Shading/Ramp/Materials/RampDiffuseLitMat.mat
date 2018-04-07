@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: DiffuseRamp
-  m_Shader: {fileID: 4800000, guid: 21053bf1e5c4b3e4cb747cd4fb86b70d, type: 3}
+  m_Name: RampCustomEmitterMat
+  m_Shader: {fileID: 4800000, guid: f8aca7baa14a99543963943a5ce22b10, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -55,7 +55,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _RampTex:
-        m_Texture: {fileID: 2800000, guid: a936b733531b54340a550f74266453ca, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1e80c0523f744dd4ba7d98f37bf3e8fe, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -78,3 +78,4 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmitterDir: {r: 1, g: 1, b: 0, a: 1}

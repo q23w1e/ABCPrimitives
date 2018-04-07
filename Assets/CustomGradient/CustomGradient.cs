@@ -12,7 +12,7 @@ public enum InterpolationTypes
 public class CustomGradient
 {
     public ColorKeys ColorKeys = new ColorKeys();
-    public InterpolationTypes interpolationTypes;
+    public InterpolationTypes InterpolationType = InterpolationTypes.Linear;
 
     public CustomGradient()
     {
@@ -31,7 +31,7 @@ public class CustomGradient
         Init();
     }
 
-    Color Evaluate(float time, InterpolationTypes type)
+    Color Evaluate(float time)
     {
         int ti = 0;
         for (int i = 0; i < ColorKeys.Count - 1; i++)
@@ -44,7 +44,7 @@ public class CustomGradient
         }
 
         Color color = new Color();
-        switch (type)
+        switch (InterpolationType)
         {
             case (InterpolationTypes.ConstantMin):
                 {
@@ -65,7 +65,7 @@ public class CustomGradient
         return color;
     }
 
-    public Texture2D GetTexture(int width, InterpolationTypes type = InterpolationTypes.Linear)
+    public Texture2D GetTexture(int width = 128)
     {
         Texture2D texture = new Texture2D(width, 1);
         Color[] pixelColors = new Color[width];
@@ -73,7 +73,7 @@ public class CustomGradient
         for (int i = 0; i < pixelColors.Length; i++)
         {
             float t = (float)i / (width - 1);
-            pixelColors[i] = Evaluate(t, type);
+            pixelColors[i] = Evaluate(t);
         }
         
         texture.SetPixels(pixelColors);

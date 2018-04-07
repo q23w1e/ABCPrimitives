@@ -1,7 +1,8 @@
-﻿Shader "Custom/DiffuseRamp"
+﻿Shader "Custom/RampDiffuseLit"
 {
 	Properties
 	{
+		_EmitterDir ("Emitter Direction", Vector) = (0, 0, 1, 1)
 		_RampTex ("Ramp Texture", 2D) = "white" {}
 	}
 	SubShader
@@ -33,6 +34,7 @@
 
 			sampler2D _RampTex;
 			float4 _RampTex_ST;
+			float4 _EmitterDir;
 			
 			v2f vert (appdata v)
 			{
@@ -41,17 +43,17 @@
 				o.uv = TRANSFORM_TEX(v.uv, _RampTex);
 				
 				float3 N = UnityObjectToWorldNormal(v.normal);
-				float3 L = -UnityWorldSpaceLightDir(_WorldSpaceLightPos0);
+				float3 L = -_EmitterDir.xyz;
 				L = normalize(L);
 
 				o.rampCoord = saturate(dot(N, L));
+				// o.rampCoord = dot(N, L) * 0.5 + 0.5;
 
 				return o;
 			}
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				// sample the texture
 				fixed4 color = tex2D(_RampTex, float2(i.rampCoord, 1));
 				
 				return color;
