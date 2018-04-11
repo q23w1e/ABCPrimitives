@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: RampCustomEmitterMat
-  m_Shader: {fileID: 4800000, guid: f8aca7baa14a99543963943a5ce22b10, type: 3}
+  m_Name: RampDiffuseLitMat
+  m_Shader: {fileID: 4800000, guid: 5c2bda4de6af0fa438f4b5722a6b4f29, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0

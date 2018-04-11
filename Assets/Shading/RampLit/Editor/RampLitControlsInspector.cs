@@ -1,15 +1,15 @@
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(RampControls))]
+[CustomEditor(typeof(RampLitControls))]
 [CanEditMultipleObjects]
-public class RampControlsInspector : Editor 
+public class RampLitControlsInspector : Editor 
 {
-    RampControls _rampControls;
+    RampLitControls _rampControls;
 
     void OnEnable() 
     {
-        _rampControls = target as RampControls;
+        _rampControls = target as RampLitControls;
     }
 
     public override void OnInspectorGUI() 
@@ -21,6 +21,7 @@ public class RampControlsInspector : Editor
         if (EditorGUI.EndChangeCheck())
         {
             Undo.RecordObject(_rampControls, "Emitter Rotation");
+            EditorUtility.SetDirty(_rampControls);
             _rampControls.Emitter.Rotation = Quaternion.Euler(emitterRotationEuler);
         }
 
